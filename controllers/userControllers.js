@@ -1,6 +1,9 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const { v2: cloudinary } = require("cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const sendResetEmail = require("../mail");
 
 const cloudinary = require('cloudinary').v2;
@@ -19,6 +22,8 @@ const storage = new CloudinaryStorage({
         transformation: [{ width: 500, height: 500, crop: "limit" }], // Resize images
     },
 });
+
+const upload = multer({ storage });
 
 // Register user
 const registerUser = async (req, res) => {
