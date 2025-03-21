@@ -175,41 +175,78 @@ const forgotPassword = async (req, res) => {
 };
 
 // Edit User
+// const editUser = async (req, res) => {
+//   upload(req, res, async (err) => {
+//     if (err) {
+//       return res.status(500).json({ message: 'Error uploading file', error: err });
+//     }
+//     try {
+//       const { userId } = req.params;
+//       const { firstName, lastName, email, password } = req.body;
+//       const updatedData = { firstName, lastName, email };
+
+//       if (password) {
+//         const salt = await bcrypt.genSalt(10);
+//         const hashedPassword = await bcrypt.hash(password, salt);
+//         updatedData.password = hashedPassword;
+//       }
+
+//       if (req.file) {
+//         const result = await cloudinary.uploader.upload(req.file.path, {
+//           folder: 'profile_images',
+//         });
+//         updatedData.profileImage = result.secure_url;
+//         fs.unlinkSync(req.file.path);
+//       }
+
+//       const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+//       if (!updatedUser) {
+//         return res.status(404).json({ message: 'User not found' });
+//       }
+
+//       res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+//     } catch (error) {
+//       console.error('Edit User Error:', error);
+//       res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+//   });
+// };
 const editUser = async (req, res) => {
   upload(req, res, async (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error uploading file', error: err });
-    }
-    try {
-      const { userId } = req.params;
-      const { firstName, lastName, email, password } = req.body;
-      const updatedData = { firstName, lastName, email };
-
-      if (password) {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        updatedData.password = hashedPassword;
+      if (err) {
+          return res.status(500).json({ message: 'Error uploading file', error: err });
       }
+      try {
+          const { userId } = req.params;
+          const { firstName, lastName, email, password } = req.body;
+          const updatedData = { firstName, lastName, email };
 
-      if (req.file) {
-        const result = await cloudinary.uploader.upload(req.file.path, {
-          folder: 'profile_images',
-        });
-        updatedData.profileImage = result.secure_url;
-        fs.unlinkSync(req.file.path);
+          if (password) {
+              const salt = await bcrypt.genSalt(10);
+              const hashedPassword = await bcrypt.hash(password, salt);
+              updatedData.password = hashedPassword;
+          }
+
+          if (req.file) {
+              const result = await cloudinary.uploader.upload(req.file.path, {
+                  folder: 'profile_images',
+              });
+              updatedData.profileImage = result.secure_url;
+              //fs.unlinkSync(req.file.path);
+          }
+
+          const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+          if (!updatedUser) {
+              return res.status(404).json({ message: 'User not found' });
+          }
+
+          res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+      } catch (error) {
+          console.error('Edit User Error:', error);
+          res.status(500).json({ message: 'Internal server error', error: error.message });
       }
-
-      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
-
-      if (!updatedUser) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      res.status(200).json({ message: 'User updated successfully', user: updatedUser });
-    } catch (error) {
-      console.error('Edit User Error:', error);
-      res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
   });
 };
 
