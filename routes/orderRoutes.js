@@ -6,7 +6,32 @@ const Order = require('../models/order');
 // POST /api/orders (Create an order)
 router.post('/', async (req, res) => {
     try {
-        const order = new Order(req.body);
+        const {
+            userId, items, shippingAddress, paymentMethod, total, orderDate,
+            firstName, lastName, country, streetAddress, townCity, state, phone, email
+        } = req.body;
+
+        const orderNumber = Math.floor(Math.random() * 1000000000);
+        const productNames = items.map(item => item.name).join(', ');
+
+        const order = new Order({
+            orderNumber: orderNumber,
+            orderDate: orderDate,
+            productName: productNames,
+            amount: total,
+            userId: userId,
+            shippingAddress: shippingAddress,
+            paymentMethod: paymentMethod,
+            firstName: firstName,
+            lastName: lastName,
+            country: country,
+            streetAddress: streetAddress,
+            townCity: townCity,
+            state: state,
+            phone: phone,
+            email: email,
+        });
+
         await order.save();
         res.status(201).json({ message: 'Order created successfully', order });
     } catch (error) {
