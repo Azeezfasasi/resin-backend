@@ -23,6 +23,6 @@ const sendEmail = async (to, subject, text) => {
 };
 
 // Test email function
-sendEmail("fas.azeez@gmail.com", "Test Email", "Hello! This is a test email using SendGrid API.");
+// sendEmail("fas.azeez@gmail.com", "Test Email", "Hello! This is a test email using SendGrid API.");
 
 module.exports = sendEmail;
