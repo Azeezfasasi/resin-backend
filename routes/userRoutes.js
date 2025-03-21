@@ -13,7 +13,7 @@ router.post("/forgot-password", forgotPassword);
 router.get('/role-counts', getUserRoleCounts);
 router.get('/', getAllUsers);
 router.get('/me', authMiddleware, getMe);
-router.put('/:userId', authMiddleware, editUser);
+router.put('/:userId', authMiddleware, upload, editUser);
 router.delete('/:userId', authMiddleware, deleteUser);
 router.patch('/:userId/reset-password', authMiddleware, resetUserPassword);
 router.patch('/:userId/role', authMiddleware, changeUserRole);

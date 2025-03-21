@@ -3,6 +3,23 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendResetEmail = require("../mail");
 
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Multer Storage Configuration for Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: "profile_images", // Cloudinary folder name
+        allowed_formats: ["jpg", "jpeg", "png", "webp"],
+        transformation: [{ width: 500, height: 500, crop: "limit" }], // Resize images
+    },
+});
+
 // Register user
 const registerUser = async (req, res) => {
   const { firstName, lastName, email, password, role, profileImage } = req.body;
@@ -153,29 +170,67 @@ const forgotPassword = async (req, res) => {
     }
 };
 
+// Edit User
+// const editUser = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+//     const updatedData = req.body;
+
+//     // Hash the password if it's included
+//     if (updatedData.password) {
+//       const salt = await bcrypt.genSalt(10);
+//       const hashedPassword = await bcrypt.hash(updatedData.password, salt);
+//       updatedData.password = hashedPassword;
+//     }
+
+//     const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+//     if (!updatedUser) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     res.status(200).json({ message: "User updated successfully", user: updatedUser });
+//   } catch (error) {
+//     console.error("Edit User Error:", error);
+//     res.status(500).json({ message: "Internal server error", error: error.message });
+//   }
+// };
 const editUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const updatedData = req.body;
-
-    // Hash the password if it's included
-    if (updatedData.password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(updatedData.password, salt);
-      updatedData.password = hashedPassword;
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error uploading file', error: err });
     }
+    try {
+      const { userId } = req.params;
+      const { firstName, lastName, email, password } = req.body;
+      const updatedData = { firstName, lastName, email };
 
-    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        updatedData.password = hashedPassword;
+      }
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+      if (req.file) {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'profile_images',
+        });
+        updatedData.profileImage = result.secure_url;
+        fs.unlinkSync(req.file.path);
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+    } catch (error) {
+      console.error('Edit User Error:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
     }
-
-    res.status(200).json({ message: "User updated successfully", user: updatedUser });
-  } catch (error) {
-    console.error("Edit User Error:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
-  }
+  });
 };
 
 // Role Counts
