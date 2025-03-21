@@ -175,30 +175,6 @@ const forgotPassword = async (req, res) => {
 };
 
 // Edit User
-// const editUser = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-//     const updatedData = req.body;
-
-//     // Hash the password if it's included
-//     if (updatedData.password) {
-//       const salt = await bcrypt.genSalt(10);
-//       const hashedPassword = await bcrypt.hash(updatedData.password, salt);
-//       updatedData.password = hashedPassword;
-//     }
-
-//     const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
-
-//     if (!updatedUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     res.status(200).json({ message: "User updated successfully", user: updatedUser });
-//   } catch (error) {
-//     console.error("Edit User Error:", error);
-//     res.status(500).json({ message: "Internal server error", error: error.message });
-//   }
-// };
 const editUser = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
