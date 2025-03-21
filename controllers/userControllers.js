@@ -321,4 +321,4 @@ const changeUserRole = async (req, res) => {
 };
 
 
-module.exports = { registerUser, loginUser, requestPasswordReset, resetPassword, forgotPassword, editUser, getUserRoleCounts, getAllUsers, getMe, deleteUser, resetUserPassword, changeUserRole  };
+module.exports = { registerUser, loginUser, requestPasswordReset, resetPassword, forgotPassword, editUser, getUserRoleCounts, getAllUsers, getMe, deleteUser, resetUserPassword, changeUserRole, upload  };
