@@ -33,7 +33,10 @@ router.post('/', async (req, res) => {
         });
 
         await order.save();
-        res.status(201).json({ message: 'Order created successfully', order });
+        res.status(201).json({ 
+            message: 'Order created successfully',
+            orderNumber: orderNumber,
+        });
     } catch (error) {
         console.error('Error creating order:', error);
         res.status(500).json({ error: 'Failed to create order' });
