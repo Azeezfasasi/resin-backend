@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
     state: { type: String},
     phone: { type: String, required: true},
     email: { type: String, required: true},
+    productImage: { type: String },
     orderStatus: {
         type: String,
         enum: [

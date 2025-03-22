@@ -44,15 +44,6 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/orders (Get all orders)
-// router.get('/', async (req, res) => {
-//     try {
-//         const orders = await Order.find();
-//         res.json(orders);
-//     } catch (error) {
-//         console.error('Error fetching orders:', error);
-//         res.status(500).json({ error: 'Failed to fetch orders' });
-//     }
-// });
 router.get('/', async (req, res) => {
     const userId = req.query.userId;
 
