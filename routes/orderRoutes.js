@@ -44,13 +44,36 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/orders (Get all orders)
+// router.get('/', async (req, res) => {
+//     try {
+//         const orders = await Order.find();
+//         res.json(orders);
+//     } catch (error) {
+//         console.error('Error fetching orders:', error);
+//         res.status(500).json({ error: 'Failed to fetch orders' });
+//     }
+// });
 router.get('/', async (req, res) => {
-    try {
-        const orders = await Order.find();
-        res.json(orders);
-    } catch (error) {
-        console.error('Error fetching orders:', error);
-        res.status(500).json({ error: 'Failed to fetch orders' });
+    const userId = req.query.userId;
+
+    if (!userId) {
+        // If no userId is provided, return all orders
+        try {
+            const orders = await Order.find();
+            res.json(orders);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            res.status(500).json({ error: 'Failed to fetch orders' });
+        }
+    } else {
+        // If userId is provided, filter orders by userId
+        try {
+            const orders = await Order.find({ userId: userId });
+            res.json(orders);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            res.status(500).json({ error: 'Failed to fetch orders' });
+        }
     }
 });
 
