@@ -235,10 +235,12 @@ const getAllUsers = async (req, res) => {
 // Get me (Current User)
 const getMe = async (req, res) => {
   try {
+    console.log("getMe called, req.user:", req.user);
       if (!req.user) {
           return res.status(401).json({ message: "Unauthorized" });
       }
       const user = await User.findById(req.user._id);
+      console.log("User found:", user);
       if (!user) {
           return res.status(404).json({ message: "User not found" });
       }
