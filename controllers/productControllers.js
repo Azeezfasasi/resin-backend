@@ -174,6 +174,52 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+// Add a variant to a product
+const addVariant = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const { variant } = req.body;
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        if (!product.variants) {
+            product.variants = [];
+        }
+
+        product.variants.push(variant);
+        await product.save();
+
+        res.status(200).json(product);
+    } catch (error) {
+        console.error("Error adding variant:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// Remove a variant from a product
+const removeVariant = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const { variantId } = req.body;
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        product.variants = product.variants.filter(variant => variant._id.toString() !== variantId);
+        await product.save();
+
+        res.status(200).json(product);
+    } catch (error) {
+        console.error("Error removing variant:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
 module.exports = {
     getAllProducts,
     createProduct,
@@ -181,4 +227,6 @@ module.exports = {
     updateProduct,
     deleteProduct,
     upload,
+    addVariant,
+    removeVariant,
 };

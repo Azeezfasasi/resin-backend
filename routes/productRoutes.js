@@ -7,6 +7,8 @@ const {
     updateProduct,
     deleteProduct,
     upload,
+    addVariant,
+    removeVariant,
 } = require("../controllers/productControllers");
 
 router.get("/", getAllProducts);
@@ -23,5 +25,7 @@ router.get('/count', async (req, res) => {
     }
 });
 router.put('/:id', upload.array('images',10), updateProduct);
+router.put("/:productId/add-variant", addVariant);
+router.put("/:productId/remove-variant", removeVariant);
 
 module.exports = router;
