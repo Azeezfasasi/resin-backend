@@ -24,16 +24,49 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 // Create Product with Cloudinary Image Upload
+// const createProduct = async (req, res) => {
+//     try {
+//         if (!req.files || req.files.length === 0) {
+//             return res.status(400).json({ message: "No image files uploaded" });
+//         }
+
+//         const imagePaths = req.files.map(file => file.path); // Cloudinary URLs
+//         // const variants = req.body.variantImages || []; 
+
+//         const variants = JSON.parse(req.body.variants || "[]"); 
+
+//         console.log("Received Data:", JSON.stringify(req.body, null, 2));
+
+//         const product = new Product({
+//             name: req.body.name,
+//             shortDescription: req.body.shortDescription,
+//             longDescription: req.body.longDescription,
+//             basePrice: req.body.basePrice,
+//             images: imagePaths,
+//             category: req.body.category,
+//             variants // Save variants
+//         });
+
+//         const savedProduct = await product.save();
+//         res.status(201).json(savedProduct);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 const createProduct = async (req, res) => {
     try {
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ message: "No image files uploaded" });
+        if (!req.files || !req.files.images || req.files.images.length === 0) {
+            return res.status(400).json({ message: "No main image files uploaded" });
         }
 
-        const imagePaths = req.files.map(file => file.path); // Cloudinary URLs
-        // const variants = req.body.variantImages || []; 
+        const imagePaths = req.files.images.map(file => file.path);
+        const variants = JSON.parse(req.body.variants || "[]");
 
-        const variants = JSON.parse(req.body.variants || "[]"); 
+        variants.forEach((variant, index) => {
+            if (req.files[`variants[${index}][image]`]) {
+                variant.image = req.files[`variants[${index}][image]`][0].path;
+            }
+        });
 
         const product = new Product({
             name: req.body.name,
@@ -42,7 +75,7 @@ const createProduct = async (req, res) => {
             basePrice: req.body.basePrice,
             images: imagePaths,
             category: req.body.category,
-            variants // Save variants
+            variants
         });
 
         const savedProduct = await product.save();
@@ -51,7 +84,6 @@ const createProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 
 // Get all products
 const getAllProducts = async (req, res) => {
