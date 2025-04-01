@@ -8,7 +8,11 @@ const variantSchema = new mongoose.Schema({
     attributes: {
         color: String,
         size: String,
-        material: String
+        material: String,
+        weight: String,
+        length: String,
+        width: String,
+        height: String,
     }
 });
 
