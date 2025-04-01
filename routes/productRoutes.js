@@ -10,7 +10,6 @@ const {
     addVariant,
     removeVariant,
 } = require("../controllers/productControllers");
-const multer = require("multer");
 
 router.get("/", getAllProducts);
 router.get("/:id", getProductById);

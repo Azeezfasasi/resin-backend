@@ -31,8 +31,9 @@ const createProduct = async (req, res) => {
         }
 
         const imagePaths = req.files.map(file => file.path); // Cloudinary URLs
+        // const variants = req.body.variantImages || []; 
 
-        const variants = JSON.parse(req.body.variants || "[]"); // Parse variants if provided
+        const variants = JSON.parse(req.body.variants || "[]"); 
 
         const product = new Product({
             name: req.body.name,
