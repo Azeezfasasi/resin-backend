@@ -24,40 +24,67 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 // Create Product with Cloudinary Image Upload
+// const createProduct = async (req, res) => {
+//     try {
+//         console.log("Start createProduct");
+//         console.log("Request Body:", req.body);
+//         console.log("Request Files:", req.files);
+
+//         if (!req.files || req.files.length === 0) {
+//             console.log("No files were uploaded");
+//             return res.status(400).json({ message: "No image files uploaded" });
+//         }
+
+//         const categories = req.body.category;
+//         const imagePaths = req.files.map(file => file.path); // Cloudinary URLs
+
+//         console.log("Image Paths (Cloudinary URLs):", imagePaths);
+//         console.log("Categories:", categories);
+
+//         const product = new Product({
+//             name: req.body.name,
+//             shortDescription: req.body.shortDescription,
+//             longDescription: req.body.longDescription,
+//             price: req.body.price,
+//             images: imagePaths,
+//             category: categories,
+//         });
+
+//         const savedProduct = await product.save();
+//         console.log("Saved Product:", savedProduct);
+//         res.status(201).json(savedProduct);
+//     } catch (error) {
+//         console.error("Create Product Error:", error);
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 const createProduct = async (req, res) => {
     try {
-        console.log("Start createProduct");
-        console.log("Request Body:", req.body);
-        console.log("Request Files:", req.files);
-
         if (!req.files || req.files.length === 0) {
-            console.log("No files were uploaded");
             return res.status(400).json({ message: "No image files uploaded" });
         }
 
-        const categories = req.body.category;
         const imagePaths = req.files.map(file => file.path); // Cloudinary URLs
 
-        console.log("Image Paths (Cloudinary URLs):", imagePaths);
-        console.log("Categories:", categories);
+        const variants = JSON.parse(req.body.variants || "[]"); // Parse variants if provided
 
         const product = new Product({
             name: req.body.name,
             shortDescription: req.body.shortDescription,
             longDescription: req.body.longDescription,
-            price: req.body.price,
+            basePrice: req.body.basePrice,
             images: imagePaths,
-            category: categories,
+            category: req.body.category,
+            variants // Save variants
         });
 
         const savedProduct = await product.save();
-        console.log("Saved Product:", savedProduct);
         res.status(201).json(savedProduct);
     } catch (error) {
-        console.error("Create Product Error:", error);
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Get all products
 const getAllProducts = async (req, res) => {
@@ -83,15 +110,42 @@ const getProductById = async (req, res) => {
 };
 
 // Update product
+// const updateProduct = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const { name, shortDescription, longDescription, price, category } = req.body;
+//         let updatedFields = { name, shortDescription, longDescription, price, category };
+
+//         if (req.files && req.files.length > 0) {
+//             const imagePaths = req.files.map(file => file.path); // Cloudinary URLs
+//             updatedFields.images = imagePaths;
+//         }
+
+//         const updatedProduct = await Product.findByIdAndUpdate(id, updatedFields, { new: true });
+
+//         if (!updatedProduct) {
+//             return res.status(404).json({ message: "Product not found" });
+//         }
+
+//         res.json(updatedProduct);
+//     } catch (error) {
+//         console.error("Error updating product:", error);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// };
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, shortDescription, longDescription, price, category } = req.body;
-        let updatedFields = { name, shortDescription, longDescription, price, category };
+        const { name, shortDescription, longDescription, basePrice, category, variants } = req.body;
+        let updatedFields = { name, shortDescription, longDescription, basePrice, category };
 
         if (req.files && req.files.length > 0) {
-            const imagePaths = req.files.map(file => file.path); // Cloudinary URLs
+            const imagePaths = req.files.map(file => file.path);
             updatedFields.images = imagePaths;
+        }
+
+        if (variants) {
+            updatedFields.variants = JSON.parse(variants); // Ensure variants are parsed correctly
         }
 
         const updatedProduct = await Product.findByIdAndUpdate(id, updatedFields, { new: true });
@@ -102,10 +156,10 @@ const updateProduct = async (req, res) => {
 
         res.json(updatedProduct);
     } catch (error) {
-        console.error("Error updating product:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 // Delete Product
 const deleteProduct = async (req, res) => {
