@@ -17,7 +17,7 @@ const variantSchema = new mongoose.Schema({
     name: String, // e.g., "Small", "Medium", "Large"
     price: Number,
     stock: Number,
-    image: String, // Optional: specific image for the variant
+    image: [String], // Optional: specific image for the variant
     attributes: {
         color: String,
         size: String,
