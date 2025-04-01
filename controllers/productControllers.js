@@ -26,8 +26,6 @@ const upload = multer({ storage });
 // Create Product with Cloudinary Image Upload
 const createProduct = async (req, res) => {
     try {
-        console.log("Request Body:", req.body);
-        console.log("Request Files:", req.files);
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: "No image files uploaded" });
         }
