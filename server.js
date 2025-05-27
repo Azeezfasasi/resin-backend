@@ -6,11 +6,10 @@ const User = require("./models/user"); // ✅ Import User model
 const bcrypt = require("bcryptjs"); // ✅ Import bcrypt
 const path = require('path');
 const productRoutes = require('./routes/productRoutes');
-// const wishlistRoutes = require("./routes/WishlistRoutes");
+const registrationRoutes = require('./routes/registrationRoutes');
 
 dotenv.config();
 connectDB();
-// const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 app.use(express.json());
@@ -26,6 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const orderRoutes = require("./routes/orderRoutes"); 
 app.use("/api/orders", orderRoutes);
+app.use('/api', registrationRoutes);
 
 app.post("/send-email", async (req, res) => {
     const { to, subject, text } = req.body;
